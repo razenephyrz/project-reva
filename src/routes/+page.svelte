@@ -1,16 +1,16 @@
 <script lang="ts">
-  async function sendNotification() {
-  const permission = await Notification.requestPermission();
+  import { onMount } from 'svelte'; // kalau pakai Svelte
 
-  if (permission === 'granted') {
-    new Notification('Dari Mr. Masa Depan', {
-      body: 'Lakukanlah task ini jika tidak ingin menyesal',
-      icon: 'https://icons8.com/icon/Yk6w23WrbwBi/anonym'
-    });
-  } else {
-    alert('Kamu perlu izinkan notifikasi supaya bisa dapat pemberitahuan.');
-  }
-};
+onMount(() => {
+  document.addEventListener('click', async () => {
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      new Notification('Mr. Masa Depan', {
+        body: 'Lakukanlah tugas ini jika tidak ingin menyesal',
+      });
+    }
+  }, { once: true }); // cuma trigger sekali
+});
 let progress = 0;
 
     type Task = {
@@ -63,7 +63,7 @@ let progress = 0;
     <div class="w-80 p-6 rounded-2xl bg-white/10 backdrop-blur-md flex flex-col items-center space-y-6">
       <h1 class="text-4xl font-bold text-white">Mr Masa Depan</h1>
   
-      <button class="btn bg-sky-400 hover:bg-sky-300 text-white w-full" name="buttonStart"  on:click={() => { page = 1; sendNotification(); }}>
+      <button class="btn bg-sky-400 hover:bg-sky-300 text-white w-full" name="buttonStart"  on:click={() => page = 1}>
         Start
       </button>
   
