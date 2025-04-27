@@ -1,17 +1,18 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
-    onMount(() => {
-  if ('Notification' in window) {
-    Notification.requestPermission().then(permission => {
-      if (permission === 'granted') {
-        new Notification('Halo Ucup!', {
-          body: 'Semangat jalani harimu 💪✨',
-          icon: '/path-to-your-icon.png' // opsional, bisa kosong
-        });
-      }
+  async function sendNotification() {
+  const permission = await Notification.requestPermission();
+
+  if (permission === 'granted') {
+    new Notification('Dari Mr. Masa Depan', {
+      body: 'Lakukanlah task ini jika tidak ingin menyesal',
+      icon: 'https://icons8.com/icon/Yk6w23WrbwBi/anonym'
     });
+  } else {
+    alert('Kamu perlu izinkan notifikasi supaya bisa dapat pemberitahuan.');
   }
-});
+};
+let progress = 0;
+
     type Task = {
     id: number;
     title: string;
@@ -38,28 +39,31 @@
     }
   
     function acceptTask() {
-      tasks[activeTask].completed = true;
-      activeTask++;
-      showChoice = false;
-    }
+  tasks[activeTask].completed = true;
+  activeTask++;
+  progress = (tasks.filter(task => task.completed).length / tasks.length) * 100;
+  showChoice = false;
+}
   
     function rejectTask() {
   showChoice = false;
   showFailedScreen = true;
 
   setTimeout(() => {
-    tasks.forEach(task => task.completed = false);
+    tasks = tasks.map(task => ({ ...task, completed: undefined }));
     activeTask = 0;
+    progress = 0; // <-- Reset progress ke 0%
     showFailedScreen = false;
-  }, 2000); // 2 detik delay
-}
+  }, 2000);
+};
+
   </script>
   {#if page == 0}
   <div class="min-h-screen flex items-center justify-center bg-gradient-to-b from-orange-300 to-pink-400">
     <div class="w-80 p-6 rounded-2xl bg-white/10 backdrop-blur-md flex flex-col items-center space-y-6">
       <h1 class="text-4xl font-bold text-white">Mr Masa Depan</h1>
   
-      <button class="btn bg-sky-400 hover:bg-sky-300 text-white w-full" on:click={() => page = 1}>
+      <button class="btn bg-sky-400 hover:bg-sky-300 text-white w-full" name="buttonStart"  on:click={() => { page = 1; sendNotification(); }}>
         Start
       </button>
   
@@ -88,19 +92,39 @@
   {:else}
   <div class="min-h-screen bg-neutral-100 flex flex-col items-center p-6">
     <div class="w-full max-w-md space-y-6">
-      <div class="text-2xl font-bold text-center mt-4">Hello, Ucup</div>
+      <div><h1 class="text-2xl text-black font-bold text-center mt-4">Hello, Ucup</h1></div>
       <div class="text-center text-gray-500">Saturday, August 3</div>
-  
       <div class="card bg-pink-200 shadow-lg">
-        <div class="card-body items-center">
-          <div class="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center">
-            <!-- Placeholder Foto -->
-            <span class="text-4xl">👤</span>
-          </div>
-          <div class="mt-2 text-lg font-semibold">Mr. Masa Depan</div>
-          <div class="text-sm text-gray-600">ID: 123456789</div>
-          <div class="text-sm text-gray-600">Life: 🌟</div>
-        </div>
+        <div class="card bg-white shadow-md p-4 flex items-center space-x-4">
+  <!-- Foto Ucup -->
+  <div class="w-20 h-20 rounded-xl overflow-hidden bg-gray-300 flex-shrink-0">
+    <img src="/your-image-path/IMG-20250427-WA0005.jpg" alt="Foto Ucup" class="object-cover w-full h-full" />
+  </div>
+
+  <!-- Data + Progress -->
+  <div class="flex flex-col w-full">
+    <!-- Nama + Info -->
+    <div class="space-y-1">
+      <div class="font-bold text-lg text-gray-800">Ucup</div>
+      <div class="text-xs text-gray-500">Umur: 17 tahun</div>
+      <div class="text-xs text-gray-500">Kelas: 12 IPA 3</div>
+      <div class="text-xs text-gray-500">Agama: Islam</div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="mt-3">
+      <div class="w-full bg-gray-300 rounded-full h-3 overflow-hidden">
+        <div 
+          class="bg-gradient-to-r from-pink-400 to-purple-500 h-3 transition-all duration-500"
+          style="width: {progress}%"
+        ></div>
+      </div>
+      <div class="text-xs text-gray-700 text-right mt-1">
+        {Math.round(progress)}%
+      </div>
+    </div>
+  </div>
+</div>
       </div>
   
       <div class="card bg-white shadow-md p-4 space-y-4">
