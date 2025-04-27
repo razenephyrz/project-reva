@@ -1,5 +1,17 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    onMount(() => {
+  if ('Notification' in window) {
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        new Notification('Halo Ucup!', {
+          body: 'Semangat jalani harimu 💪✨',
+          icon: '/path-to-your-icon.png' // opsional, bisa kosong
+        });
+      }
+    });
+  }
+});
     type Task = {
     id: number;
     title: string;
