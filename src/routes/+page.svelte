@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { onMount } from 'svelte';
     let page = 0;
     let tasks = [
@@ -14,7 +14,7 @@
     let activeTask = 0;
     let showChoice = false;
   
-    function openTask(index) {
+    function openTask(index: number) {
       activeTask = index;
       showChoice = true;
     }
