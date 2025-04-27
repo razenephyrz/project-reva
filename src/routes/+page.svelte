@@ -1,14 +1,20 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    type Task = {
+    id: number;
+    title: string;
+    completed: boolean | undefined;
+    };
+    let showFailedScreen = false; 
     let page = 0;
     let tasks = [
-      { id: 1, title: 'Bangun pagi', completed: false },
-      { id: 2, title: 'Sholat subuh', completed: false },
-      { id: 3, title: 'Makan bergizi', completed: false },
-      { id: 4, title: 'Membaca buku', completed: false },
-      { id: 5, title: 'Olahraga', completed: false },
-      { id: 6, title: 'Membantu orang lain', completed: false },
-      { id: 7, title: 'Tidur awal', completed: false }
+      { id: 1, title: 'Bangun pagi', completed: undefined },
+      { id: 2, title: 'Sholat subuh', completed: undefined },
+      { id: 3, title: 'Makan bergizi', completed: undefined },
+      { id: 4, title: 'Membaca buku', completed: undefined },
+      { id: 5, title: 'Olahraga', completed: undefined },
+      { id: 6, title: 'Membantu orang lain', completed: undefined },
+      { id: 7, title: 'Tidur awal', completed: undefined }
     ];
   
     let activeTask = 0;
@@ -26,10 +32,15 @@
     }
   
     function rejectTask() {
-      tasks.forEach(task => task.completed = false);
-      activeTask = 0;
-      showChoice = false;
-    }
+  showChoice = false;
+  showFailedScreen = true;
+
+  setTimeout(() => {
+    tasks.forEach(task => task.completed = false);
+    activeTask = 0;
+    showFailedScreen = false;
+  }, 2000); // 2 detik delay
+}
   </script>
   {#if page == 0}
   <div class="min-h-screen flex items-center justify-center bg-gradient-to-b from-orange-300 to-pink-400">
@@ -112,6 +123,12 @@
         </div>
       </div>
     {/if}
+    {#if showFailedScreen}
+  <div class="fixed inset-0 bg-red-500 flex justify-center items-center">
+    <div class="text-4xl font-bold text-white">You're Failed!</div>
+  </div>
+{/if}
+
   </div>
   
   {/if}
