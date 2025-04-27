@@ -1,7 +1,17 @@
 <script lang="ts">
   import { onMount } from 'svelte'; // kalau pakai Svelte
 
-onMount(() => {
+  onMount(() => {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then((registration) => {
+        console.log('Service Worker registered with scope:', registration.scope);
+      })
+      .catch((err) => {
+        console.error('Service Worker registration failed:', err);
+      });
+  }
+
   document.addEventListener('click', async () => {
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
@@ -9,7 +19,7 @@ onMount(() => {
         body: 'Lakukanlah tugas ini jika tidak ingin menyesal',
       });
     }
-  }, { once: true }); // cuma trigger sekali
+  }, { once: true });
 });
 let progress = 0;
 
